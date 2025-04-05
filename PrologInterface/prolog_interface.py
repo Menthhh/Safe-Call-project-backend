@@ -48,25 +48,57 @@ class PrologInterface:
             print(f"DEBUG: Current directory: {os.getcwd()}")
             print(f"DEBUG: Prolog file exists: {os.path.exists(file_to_use)}")
         
-        # Run the Prolog process
-        process = subprocess.run(
-            command,
-            capture_output=True,
-            text=True,
-            encoding='utf-8'  
-        )
-        
-        if debug:
-            print(f"DEBUG: Return code: {process.returncode}")
-            print(f"DEBUG: Stdout: '{process.stdout}'")
-            print(f"DEBUG: Stderr: '{process.stderr}'")
-        
-        # Check for errors
-        if process.returncode != 0:
-            if process.stderr:
-                raise RuntimeError(f"Prolog error: {process.stderr}")
-            else:
-                raise RuntimeError("Prolog process failed with no error message")
-        
-        # Return the output
-        return process.stdout.strip()
+        try:
+            # Run the Prolog process with universal_newlines=False to get bytes output
+            process = subprocess.run(
+                command,
+                capture_output=True,
+                text=False  # Changed to False to get bytes instead of text
+            )
+            
+            # Try to decode with 'utf-8' first, then fall back to other encodings
+            try:
+                stdout = process.stdout.decode('utf-8') if process.stdout else ""
+                stderr = process.stderr.decode('utf-8') if process.stderr else ""
+            except UnicodeDecodeError:
+                # Try with common Thai encodings
+                for encoding in ['tis-620', 'cp874']:
+                    try:
+                        stdout = process.stdout.decode(encoding) if process.stdout else ""
+                        stderr = process.stderr.decode(encoding) if process.stderr else ""
+                        break
+                    except UnicodeDecodeError:
+                        continue
+                else:
+                    # Last resort: replace invalid characters
+                    stdout = process.stdout.decode('utf-8', errors='replace') if process.stdout else ""
+                    stderr = process.stderr.decode('utf-8', errors='replace') if process.stderr else ""
+            
+            if debug:
+                print(f"DEBUG: Return code: {process.returncode}")
+                print(f"DEBUG: Stdout: '{stdout}'")
+                print(f"DEBUG: Stderr: '{stderr}'")
+            
+            # Check for errors
+            if process.returncode != 0:
+                if stderr:
+                    raise RuntimeError(f"Prolog error: {stderr}")
+                else:
+                    raise RuntimeError("Prolog process failed with no error message")
+                
+            if '\\u0E' in stdout:
+                try:
+                    stdout = stdout.encode('utf-8').decode('unicode_escape')
+                    if debug:
+                        print(f"DEBUG: Decoded escaped unicode to: {stdout}")
+                except Exception as decode_err:
+                    if debug:
+                        print(f"DEBUG: Failed to decode unicode escapes: {decode_err}")
+            
+            # Return the output
+            return stdout.strip()
+            
+        except Exception as e:
+            if debug:
+                print(f"DEBUG: Exception occurred: {str(e)}")
+            raise

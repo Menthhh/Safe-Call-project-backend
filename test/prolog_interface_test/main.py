@@ -9,24 +9,33 @@ sys.path.insert(0, project_root)
 from PrologInterface import PrologInterface
 
 def main():
-    # Get the current directory
-    current_dir = os.getcwd()
-    prolog_file = os.path.join(current_dir, "test\prolog_interface_test\calculator.pl")
+    # Get the path to the Prolog file - using absolute path
+    prolog_file = os.path.abspath(os.path.join(project_root, 
+                   "LinguisticAnalyzer", "thai_scam_detector.pl"))
     
-    print(f"Looking for calculator.pl at: {prolog_file}")
+    print(f"Looking for .pl at: {prolog_file}")
     
-    # Initialize the Prolog interface
-    prolog = PrologInterface(prolog_file)
+    # Check if the file exists
+    if not os.path.exists(prolog_file):
+        print(f"ERROR: Prolog file does not exist: {prolog_file}")
+        return
     
-    print("Testing Prolog Interface")
-    a = int(input("Enter first number: "))
-    b = int(input("Enter second number: "))
-    # Simple addition test with debug output
-    query = f"subtract({a},{b},Result), write(Result)."
-    result = prolog.query(query, debug=False)
-    print(f"Result: {result}")
+    try:
+        # Initialize the Prolog interface
+        prolog = PrologInterface(prolog_file)
+        
+        print("Testing Prolog Interface")
+        query = ("analyze_thai_scam_enhanced([['สวัสดี', 'ครับ', 'คุณ', 'ลูกค้า'], ['ผม', 'นาย', 'สม', 'ชาย', 'จาก', 'ฝ่าย', 'ความปลอดภัย', 'ธนาคาร', 'กรุงไทย']]).")
+        
+        # Enable debug to see what's happening
+        result = prolog.query(query, debug=False)
+        
+        print(result)
     
-
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     main()
