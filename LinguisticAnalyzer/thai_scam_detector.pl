@@ -20,7 +20,6 @@ detect_scam(Sentences, ScamReport, TotalScore, RiskCategory) :-
 % Improved Bank Impersonation Category with more comprehensive keyword matching
 scam_category(bank_impersonation, 
     [
-        % Bank-related impersonation words - expanded
         'ฝ่ายความปลอดภัย',   % Security department
         'ความปลอดภัย',       % Security (partial match)
         'ฝ่าย',              % Department (partial match)

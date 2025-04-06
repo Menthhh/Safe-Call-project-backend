@@ -9,30 +9,14 @@ sys.path.insert(0, project_root)
 from LinguisticAnalyzer import LinguisticAnalyzer
 
 def test_word_detection():
-    # Create test sentences with the exact words we're looking for
-    test_sentences = [
-        "นี่คือ ธนาคาร",           # Contains "ธนาคาร"
-        "ฉันมี เงิน มาก",          # Contains "เงิน"
-        "บัญชี ของฉัน",            # Contains "บัญชี"
-        "นี่เป็นเรื่อง ด่วน มาก",   # Contains "ด่วน"
-        "ไม่มีคำที่เราค้นหา"       # Contains none
-    ]
-   
-    
-    # Test each sentence
-    for i, sentence in enumerate(test_sentences):
-        print(f"\n{'='*80}")
-        print(f"Testing sentence {i+1}: {sentence}")
-        
-        # Create analyzer
-        analyzer = LinguisticAnalyzer(paragraph=sentence)
+    # Sample Thai paragraph to test
+    paragraph = "สวัสดีครับคุณสมชาย ผมโทรมาจากฝ่ายบริการลูกค้าของธนาคาร [ชื่อธนาคารปลอม] ครับ เรากำลังทำการอัปเดตข้อมูลระบบใหม่และจำเป็นต้องตรวจสอบข้อมูลของลูกค้าทุกท่านเพื่อความปลอดภัยของบัญชีของคุณ คุณสามารถช่วยยืนยันข้อมูลส่วนตัวบางประการให้เราหน่อยได้ไหมครับ เช่น เลขบัตรประชาชน, เลขที่บัญชีธนาคาร, และรหัสผ่าน เพื่อให้เราสามารถอัปเดตข้อมูลให้เสร็จสิ้น และเพื่อป้องกันการถูกแฮกหรือการเข้าถึงบัญชีโดยไม่ได้รับอนุญาต หากคุณไม่ยืนยันข้อมูลวันนี้ เราจะไม่สามารถดำเนินการอัปเดตข้อมูลให้เสร็จสิ้นได้ครับ เพื่อความปลอดภัยของคุณเอง กรุณาบอกข้อมูลตามที่เราต้องการภายใน 24 ชั่วโมงนะครับ"
 
-        
-        # Call the simplified detection method
-        scam_results = analyzer.detectScamSentence()
-        
-        print(scam_results)
+    # Initialize the LinguisticAnalyzer with the paragraph
+    analyzer = LinguisticAnalyzer(paragraph=paragraph)
+    results = analyzer.apply_rules()
     
-
+    print("Test results:")
+    print(results)
 if __name__ == "__main__":
     test_word_detection()

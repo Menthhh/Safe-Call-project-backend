@@ -11,7 +11,7 @@ from PrologInterface import PrologInterface
 def main():
     # Get the path to the Prolog file - using absolute path
     prolog_file = os.path.abspath(os.path.join(project_root, 
-                   "LinguisticAnalyzer", "thai_scam_detector.pl"))
+                   "LinguisticAnalyzer", "rules.pl"))
     
     print(f"Looking for .pl at: {prolog_file}")
     
@@ -25,7 +25,7 @@ def main():
         prolog = PrologInterface(prolog_file)
         
         print("Testing Prolog Interface")
-        query = ("analyze_thai_scam_enhanced([['สวัสดี', 'ครับ', 'คุณ', 'ลูกค้า'], ['ผม', 'นาย', 'สม', 'ชาย', 'จาก', 'ฝ่าย', 'ความปลอดภัย', 'ธนาคาร', 'กรุงไทย']]).")
+        query = ("detect_scam([['ผม', 'มาจาก', 'ธนาคาร', 'กรุงไทย', 'กรุณา', 'ให้', 'ข้อมูล', 'บัญชี', 'ของคุณ', 'ทันที']], Matches).")
         
         # Enable debug to see what's happening
         result = prolog.query(query, debug=False)
