@@ -10,7 +10,7 @@ class LinguisticAnalyzer:
     def __init__(self, paragraph=None, prolog_file="LinguisticAnalyzer\\rules.pl"):
         self.paragraph = paragraph
         self.thai_text_processor = ThaiTextProcessor()
-        self.sentences = []  # List of sentences after separating the paragraph
+        self.sentences = []  
         self.prolog_interface = PrologInterface(prolog_file)
         
     def tokenizeThaiText(self):
@@ -19,20 +19,17 @@ class LinguisticAnalyzer:
         return self.sentences
         
     def apply_rules(self):
-        #tokenize the text first
         self.tokenizeThaiText()
+        print(f"Tokenized sentences: {self.sentences}")
 
         """Apply Prolog rules to the tokenized sentences"""
         if not self.sentences:
             raise ValueError("No sentences to process. Please tokenize the text first.")
         
-        # Convert each sentence to Prolog-friendly format (list of words)
         prolog_sentence_format = [[word for word in sentence] for sentence in self.sentences]
         
-        # Construct the query to detect scams
-        query = f"detect_scam({prolog_sentence_format}, Matches)."
+        query = f"analyze_message({prolog_sentence_format})."
         
-        # Execute the query using the Prolog interface
         results = self.prolog_interface.query(query)
         
         return results
